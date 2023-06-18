@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "booktag.helloWorld",
-        "title": "Hello World"
+        "command": "booktag.mark",
+        "title": "mark the line"
       }
     ]
   },
