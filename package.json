@@ -15,7 +15,11 @@
     "commands": [
       {
         "command": "booktag.mark",
-        "title": "mark the line"
+        "title": "BookTag: Mark"
+      },
+      {
+        "command": "booktag.undo",
+        "title": "BookTag: Undo"
       }
     ]
   },
