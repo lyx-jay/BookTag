@@ -51,15 +51,49 @@ class BookTag {
     const idx = this.markList.indexOf(decorationOption)
     this.markList.splice(idx, 1)
     this.markMap.delete(row)
-    this.refresh()
+    this.update()
   }
 
   /**
-   * refresh mark list and redraw marks
+   * update mark list and redraw marks
    */
-  refresh() {
+  update() {
     const editor = this.getActiveEditor()
     editor.setDecorations(this.baseDecoration, this.markList)
+  }
+
+  updateMarkList(newLines: Array<{ number: number, content: string }>) {
+    // key is old row, value is new row
+    const temp = new Map<string, number>()
+    newLines.forEach(newLine => {
+      console.log('markMap', this.markMap)
+      for (const row in this.markMap) {
+        console.log(`old line num: ${row}`)
+        if (newLine.number <= Number(row)) {
+          temp.set(row, Number(row) + 1)
+        }
+      }
+    })
+    console.log('temp', temp)
+    // vscode.window.showInformationMessage(JSON.stringify(temp))
+    for (const oldRow in temp) {
+      const oldRowNumber = Number(oldRow)
+      const decoration = this.markMap.get(oldRowNumber)
+      const idx = this.markList.indexOf(decoration)
+      // delete old item
+      this.markList.splice(idx, 1)
+      this.markMap.delete(oldRowNumber)
+      // add new item
+      const newRowNumber = temp.get(oldRow)!
+      const newDecoration = {
+        range: new vscode.Range(newRowNumber, 0, newRowNumber, 0),
+        renderOptions: this.getIcon()
+      }
+      this.markList.push(newDecoration)
+      this.markMap.set(newRowNumber, newDecoration)
+    }
+    temp.clear()
+    this.update()
   }
 
   /**

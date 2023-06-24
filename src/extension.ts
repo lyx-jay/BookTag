@@ -4,6 +4,10 @@ import BookTag from './tag';
 
 export function activate(context: vscode.ExtensionContext) {
 
+	// function log(string: string) {
+	// 	vscode.window.showInformationMessage(string)
+	// }
+
 	let lastContent: string = ""
 	const tag = new BookTag({ context })
 
@@ -11,25 +15,27 @@ export function activate(context: vscode.ExtensionContext) {
 
 	vscode.workspace.onDidOpenTextDocument((document) => {
 		lastContent = document.getText()
-		console.log('current file content', lastContent)
+		// log('打开文件时，记录当前文本字数')
 	})
 
 	vscode.workspace.onDidSaveTextDocument((document) => {
+		console.log('last content -> ', lastContent)
 		const content = document.getText()
+		// lastContent = content
 		const lines = content.split('\n')
+		console.log('lines:', lines)
 		const lastLines = lastContent.split('\n')
+		console.log('lastLines', lastLines)
 		const addedLines: Array<{ number: number, content: string }> = []
-
 		lines.forEach((line, index) => {
 			if (line !== lastLines[index]) {
 				addedLines.push({ number: index + 1, content: line })
 			}
 		})
-
+		// log(`file saved with ${addedLines.length} new lines`)
 		console.log(`file saved with ${addedLines.length} new lines`)
-		addedLines.forEach(line => {
-			console.log(`new line ${line.number}`)
-		})
+		tag.updateMarkList(addedLines)
+		lastContent = content
 	})
 
 
